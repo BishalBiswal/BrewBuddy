@@ -1,5 +1,6 @@
 import brewersData from '../data/brewers.json';
 import brewRules from '../data/brew_rules.json';
+import { generateFallbackSteps } from './recipe-validator';
 
 const flavorAdjustments = brewRules.flavor_focus_adjustments;
 const grindLevelsOrdered = brewRules.grind_levels_ordered;
@@ -9,17 +10,18 @@ export function baseRecipe(brewerId) {
   if (!brewer) {
     throw new Error(`Unknown brewer: ${brewerId}`);
   }
+  const base = brewer.base_recipe;
   return {
     brewer_id: brewer.id,
     brewer_name: brewer.name,
-    ratio: brewer.base_recipe.ratio,
-    temp_c: brewer.base_recipe.temp_c,
-    grind_relative: brewer.base_recipe.grind_relative,
-    total_time_seconds: brewer.base_recipe.total_time_seconds,
-    technique_notes: brewer.technique_notes,
-    brew_steps: brewer.brew_steps || [],
-    temp_c_range: brewer.default_temp_range,
-    ratio_range: brewer.default_ratio_range,
+    ratio: base.ratio,
+    temp_c: base.temp_c,
+    grind_relative: base.grind_relative,
+    total_time_seconds: base.total_time_seconds,
+    technique_notes: `Brewer: ${brewer.name}. ${brewer.constraints ? `Supports up to ${brewer.constraints.max_pours || 1} pours.` : ''}`,
+    brew_steps: [],
+    temp_c_range: brewer.default_temp_range || brewer.constraints?.temperature_range,
+    ratio_range: brewer.default_ratio_range || brewer.constraints?.ratio_range,
   };
 }
 
@@ -55,6 +57,9 @@ export function adjustForFlavorFocus(base, flavorFocus, batchSizeMl) {
   const doseG = Math.round((batchSizeMl / adjustedRatio) * 10) / 10;
   const waterG = Math.round(batchSizeMl);
 
+  const brewer = brewersData.find(b => b.id === base.brewer_id);
+  const fallbackSteps = brewer ? generateFallbackSteps(brewer, adjustedRatio, doseG, waterG) : [];
+
   return {
     brewer_id: base.brewer_id,
     brewer_name: base.brewer_name,
@@ -67,7 +72,6 @@ export function adjustForFlavorFocus(base, flavorFocus, batchSizeMl) {
     grind_relative: adjustedGrind,
     grind_grinder_setting: null,
     total_time_seconds: adjustedTime,
-    technique_notes: base.technique_notes,
-    brew_steps: base.brew_steps || [],
+    brew_steps: fallbackSteps,
   };
 }

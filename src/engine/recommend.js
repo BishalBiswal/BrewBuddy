@@ -1,4 +1,5 @@
 import brewRules from '../data/brew_rules.json';
+import { generateBrewIntent, analyzeCoffee } from './brew-intent';
 
 const methodSuggestions = brewRules.method_suggestions;
 
@@ -74,3 +75,20 @@ export function suggestBrewMethods(roastLevel, process, tastingNotes) {
 
   return deduped;
 }
+
+export function recommendAndAnalyze(coffeeData) {
+  const analysis = analyzeCoffee(coffeeData);
+  const brewIntent = generateBrewIntent(coffeeData);
+  const roastLevel = coffeeData.roastLevel || coffeeData.roast_level || '';
+  const process = coffeeData.process || '';
+  const tastingNotes = coffeeData.tastingNotes || coffeeData.tasting_notes || [];
+  const suggestions = suggestBrewMethods(roastLevel, process, tastingNotes);
+
+  return {
+    analysis,
+    brewIntent,
+    suggestions,
+  };
+}
+
+export { generateBrewIntent, analyzeCoffee };

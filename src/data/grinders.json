@@ -66,6 +66,28 @@
     "micron_range_max": 1000
   },
   {
+    "id": "timemore_c3",
+    "brand": "Timemore",
+    "model": "C3",
+    "setting_type": "clicks",
+    "step_size": 1,
+    "min_setting": 0,
+    "max_setting": 24,
+    "micron_range_min": 120,
+    "micron_range_max": 1000
+  },
+  {
+    "id": "1zpresso_qair",
+    "brand": "1Zpresso",
+    "model": "Q Air",
+    "setting_type": "clicks",
+    "step_size": 1,
+    "min_setting": 0,
+    "max_setting": 40,
+    "micron_range_min": 100,
+    "micron_range_max": 1200
+  },
+  {
     "id": "fellow_ode_v2",
     "brand": "Fellow",
     "model": "Ode (Gen 2)",

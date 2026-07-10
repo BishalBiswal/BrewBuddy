@@ -7,7 +7,10 @@ import { suggestBrewMethods } from './engine/recommend';
 import { baseRecipe, adjustForFlavorFocus } from './engine/recipe';
 import { generateRecipeFromLLM } from './engine/llm-recipe';
 import { translateGrindToGrinder, calibrateCustomGrinder } from './engine/grind';
-import { buildFullRationale } from './engine/rationale';
+import { buildFullRationale, buildDynamicRationale } from './engine/rationale';
+import { analyzeCoffee } from './engine/coffee-analysis';
+import { generateBrewIntent } from './engine/brew-intent';
+import { validateRecipe, repairRecipe } from './engine/recipe-validator';
 import brewers from './data/brewers.json';
 
 const STEPS = ['packet', 'equipment', 'flavor', 'recipe'];
@@ -17,6 +20,7 @@ const initialPacket = {
   roaster: '',
   originCountry: '',
   region: '',
+  variety: '',
   roastLevel: '',
   process: '',
   tastingNotes: [],
@@ -46,6 +50,35 @@ export default function App() {
       brewer_name: brewerMap[s.brewer_id] || s.brewer_id,
     }));
   }, [packet.roastLevel, packet.process, packet.tastingNotes]);
+
+  const coffeeAnalysis = useMemo(() => {
+    try {
+      return analyzeCoffee({
+        roastLevel: packet.roastLevel,
+        process: packet.process,
+        tastingNotes: packet.tastingNotes,
+        originCountry: packet.originCountry,
+        region: packet.region,
+        variety: packet.variety,
+        altitudeM: packet.altitudeM,
+      });
+    } catch { return null; }
+  }, [packet.roastLevel, packet.process, packet.tastingNotes, packet.originCountry, packet.region, packet.altitudeM]);
+
+  const brewIntent = useMemo(() => {
+    try {
+      return generateBrewIntent({
+        roastLevel: packet.roastLevel,
+        process: packet.process,
+        tastingNotes: packet.tastingNotes,
+        originCountry: packet.originCountry,
+        region: packet.region,
+        variety: packet.variety,
+        altitudeM: packet.altitudeM,
+      }, flavorFocus);
+    } catch { return null; }
+  }, [packet, flavorFocus]);
+
   const handlePacketSubmit = useCallback(() => {
     if (!packet.roastLevel) return;
     setStep('equipment');
@@ -102,6 +135,7 @@ export default function App() {
       roaster: packet.roaster,
       origin_country: packet.originCountry,
       region: packet.region,
+      variety: packet.variety,
       roast_level: packet.roastLevel,
       process: packet.process,
       tasting_notes: packet.tastingNotes,
@@ -117,12 +151,32 @@ export default function App() {
         flavor_focus: flavorFocus,
         selected_grinder: selectedGrinder,
       });
-      const nextRecipe = { ...generated.recipe };
+
+      let nextRecipe = { ...generated.recipe };
+
       if (selectedGrinder && !nextRecipe.grind_grinder_setting) {
         nextRecipe.grind_grinder_setting = translateGrindToGrinder(nextRecipe.grind_relative, selectedGrinder);
       }
+
+      let repairWarnings = [];
+      const validation = validateRecipe(nextRecipe, selectedBrewer);
+      if (!validation.valid) {
+        nextRecipe = repairRecipe(nextRecipe, selectedBrewer, validation);
+        repairWarnings = validation.errors;
+      }
+
+      if (!nextRecipe.recipe_name) {
+        nextRecipe.recipe_name = `${nextRecipe.brewer_name || selectedBrewer} Recipe`;
+      }
+
+      const dynamicRationale = buildDynamicRationale(brewIntent || {}, coffeeAnalysis || {}, nextRecipe.recipe_style);
+      const combinedRationale = [generated.rationale, dynamicRationale].filter(Boolean).join(' ');
+
       setRecipe(nextRecipe);
-      setRationale(generated.rationale || '');
+      setRationale(combinedRationale || generated.rationale || '');
+      if (repairWarnings.length > 0) {
+        setRecipeWarning(`Recipe adjusted for brewer compatibility: ${repairWarnings.join('; ')}`);
+      }
       setSuggestions(generated.suggestions || []);
     } catch (err) {
       const fallback = buildFallbackRecipe();
@@ -134,7 +188,7 @@ export default function App() {
       setRecipeStatus('');
       setStep('recipe');
     }
-  }, [packet, selectedBrewer, selectedGrinder, batchSizeMl, flavorFocus, buildFallbackRecipe]);
+  }, [packet, selectedBrewer, selectedGrinder, batchSizeMl, flavorFocus, buildFallbackRecipe, brewIntent, coffeeAnalysis]);
 
   const handleFlavorSubmit = useCallback(() => {
     handleGenerateRecipe();
@@ -174,7 +228,7 @@ export default function App() {
 
       <main className="app-main">
         {step === 'packet' && (
-          <PacketForm packet={packet} onChange={setPacket} onSubmit={handlePacketSubmit} />
+          <PacketForm packet={packet} onChange={setPacket} onSubmit={handlePacketSubmit} brewerSuggestions={brewerSuggestions} />
         )}
 
         {step === 'equipment' && (
@@ -220,5 +274,3 @@ export default function App() {
     </div>
   );
 }
-
-

@@ -3,8 +3,15 @@ import brewers from '../data/brewers.json';
 import grinders from '../data/grinders.json';
 import GrinderCalibration from './GrinderCalibration';
 
-function getBatchSizeMin(selectedBrewer) {
-  return selectedBrewer === 'espresso' ? 15 : 50;
+function getBatchSizeAdvisory(selectedBrewer) {
+  if (selectedBrewer === 'espresso') return { min: 15, message: 'Espresso typically uses 15-60ml per shot' };
+  if (selectedBrewer === 'moka_pot') return { min: 50, message: 'Moka pots typically need at least 50ml of water' };
+  if (selectedBrewer === 'aeropress') return { min: 100, message: 'Aeropress works best with 100-250ml' };
+  if (selectedBrewer === 'v60') return { min: 150, message: 'V60 pour-over typically needs 150-500ml for best results' };
+  if (selectedBrewer === 'chemex') return { min: 200, message: 'Chemex typically needs at least 200ml due to filter size' };
+  if (selectedBrewer === 'french_press') return { min: 200, message: 'French press typically needs at least 200ml' };
+  if (selectedBrewer === 'clever_dripper') return { min: 150, message: 'Clever Dripper works best with 150-400ml' };
+  return { min: 50, message: 'This brewer typically works with at least 50ml' };
 }
 
 export default function EquipmentPicker({
@@ -21,12 +28,11 @@ export default function EquipmentPicker({
   onBack,
   onSubmit,
 }) {
-  const batchSizeMin = getBatchSizeMin(selectedBrewer);
+  const advisory = selectedBrewer ? getBatchSizeAdvisory(selectedBrewer) : null;
+  const isLowBatchSize = advisory && batchSizeMl < advisory.min;
 
   const handleBrewerChange = (brewerId) => {
     onBrewerChange(brewerId);
-    const nextMin = getBatchSizeMin(brewerId);
-    if (batchSizeMl < nextMin) onBatchSizeChange(nextMin);
   };
 
   return (
@@ -66,11 +72,14 @@ export default function EquipmentPicker({
         Batch Size (ml)
         <input
           type="number"
-          min={batchSizeMin}
+          min="1"
           max="2000"
           value={batchSizeMl}
-          onChange={(e) => onBatchSizeChange(Math.max(batchSizeMin, Number(e.target.value)))}
+          onChange={(e) => onBatchSizeChange(Number(e.target.value))}
         />
+        {isLowBatchSize && (
+          <span className="batch-warning">{advisory.message}</span>
+        )}
       </label>
 
       <label>

@@ -2,6 +2,7 @@ import brewRules from '../data/brew_rules.json';
 import brewersData from '../data/brewers.json';
 
 const flavorAdjustments = brewRules.flavor_focus_adjustments;
+const recipeStyles = brewRules.recipe_styles;
 
 function roastLabel(roastLevel) {
   if (!roastLevel) return 'Unknown roast';
@@ -79,4 +80,37 @@ export function buildFullRationale(roastLevel, process, tastingNotes, brewerId, 
     return `${brewerRationale} ${flavorRationale}`;
   }
   return brewerRationale;
+}
+
+export function buildDynamicRationale(brewIntent, coffeeAnalysis, recipeStyle) {
+  const parts = [];
+
+  if (brewIntent.premiumCoffee) {
+    parts.push('This is a special coffee that deserves a competition-style approach.');
+  } else if (brewIntent.comfortCup) {
+    parts.push('This recipe is designed for a comforting, approachable cup.');
+  }
+
+  if (brewIntent.lowAgitation) {
+    parts.push('Using minimal agitation to preserve delicate flavors and prevent astringency.');
+  } else if (brewIntent.highAgitation) {
+    parts.push('Using higher agitation to boost extraction and body.');
+  }
+
+  if (brewIntent.fruitForward) {
+    parts.push('The recipe highlights the natural fruit-forward character of this coffee.');
+  }
+
+  if (brewIntent.gentleExtraction) {
+    parts.push('Gentle extraction parameters protect this coffee\'s subtle complexity.');
+  }
+
+  if (recipeStyle) {
+    const style = recipeStyles[recipeStyle];
+    if (style) {
+      parts.push(`Inspired by the ${style.name} approach: ${style.description}`);
+    }
+  }
+
+  return parts.join(' ');
 }

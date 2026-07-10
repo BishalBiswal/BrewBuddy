@@ -431,6 +431,48 @@ label select:focus {
   color: #8a5a00;
   background: #fff4d6;
 }
+
+.live-suggestions {
+  margin-top: 4px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: var(--radius);
+}
+
+.live-suggestions h4 {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+
+.suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.suggestion-chip {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--accent);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.batch-warning {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #8a5a00;
+  background: #fff4d6;
+  padding: 4px 8px;
+  border-radius: var(--radius);
+}
 @media (max-width: 480px) {
   .row { flex-direction: column; gap: 0; }
   .app { padding: 8px; }

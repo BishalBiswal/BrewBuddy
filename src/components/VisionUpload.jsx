@@ -98,10 +98,10 @@ export default function VisionUpload({ onExtracted, onError }) {
     <div className="vision-upload">
       <p className="help-text">Optionally scan a coffee bag label to auto-fill the form.</p>
       <div className="vision-buttons">
-        <button className="btn-secondary" onClick={handleCamera} disabled={uploading}>
+        <button type="button" className="btn-secondary" onClick={handleCamera} disabled={uploading}>
           {uploading ? 'Scanning...' : 'Camera'}
         </button>
-        <button className="btn-secondary" onClick={handleUpload} disabled={uploading}>
+        <button type="button" className="btn-secondary" onClick={handleUpload} disabled={uploading}>
           Upload Image
         </button>
       </div>

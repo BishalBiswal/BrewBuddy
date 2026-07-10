@@ -24,12 +24,11 @@ describe('baseRecipe', () => {
     expect(r.grind_relative).toBe('coarse');
   });
 
-  it('includes brew_steps for V60', () => {
+  it('returns base recipe with empty brew_steps array (dynamic generation)', () => {
     const r = baseRecipe('v60');
     expect(r.brew_steps).toBeTruthy();
-    expect(r.brew_steps.length).toBeGreaterThan(0);
-    expect(r.brew_steps[0]).toHaveProperty('time_sec');
-    expect(r.brew_steps[0]).toHaveProperty('instruction');
+    expect(Array.isArray(r.brew_steps)).toBe(true);
+    expect(r.brew_steps.length).toBe(0);
   });
 
   it('throws for unknown brewer', () => {
@@ -51,11 +50,10 @@ describe('allBaseRecipes', () => {
     expect(ids).toContain('clever_dripper');
   });
 
-  it('all base recipes have brew_steps', () => {
+  it('all base recipes have brew_steps array (may be empty for base)', () => {
     const recipes = allBaseRecipes();
     for (const r of recipes) {
-      expect(r.brew_steps).toBeTruthy();
-      expect(r.brew_steps.length).toBeGreaterThan(0);
+      expect(Array.isArray(r.brew_steps)).toBe(true);
     }
   });
 });
@@ -70,14 +68,16 @@ describe('adjustForFlavorFocus', () => {
     expect(adjusted.water_temp_c).toBe(94);
   });
 
-  it('passes brew_steps through to adjusted recipe', () => {
+  it('generates brew_steps dynamically for adjusted recipe', () => {
     const adjusted = adjustForFlavorFocus(base, 'balanced', 250);
-    expect(adjusted.brew_steps).toEqual(base.brew_steps);
+    expect(Array.isArray(adjusted.brew_steps)).toBe(true);
+    expect(adjusted.brew_steps.length).toBeGreaterThan(0);
   });
 
   it('brew steps water_fraction values sum to ~1.0 for V60', () => {
     const adjusted = adjustForFlavorFocus(base, 'balanced', 300);
-    const totalFraction = adjusted.brew_steps.reduce((sum, s) => sum + s.water_fraction, 0);
+    const pourSteps = adjusted.brew_steps.filter(s => s.type === 'pour' || s.type === 'bloom');
+    const totalFraction = pourSteps.reduce((sum, s) => sum + (s.water_fraction || s.water || 0), 0);
     expect(totalFraction).toBeCloseTo(1.0, 1);
   });
 

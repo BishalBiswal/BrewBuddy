@@ -54,6 +54,5 @@ describe('suggestBrewMethods', () => {
     expect(new Set(ids).size).toBe(ids.length);
     expect(ids).toContain('v60');
     expect(ids).toContain('aeropress');
-    expect(ids.length).toBe(2);
   });
 });

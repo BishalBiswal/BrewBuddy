@@ -9,6 +9,8 @@
     "dev:backend": "node server/extract-server.mjs",
     "dev:all": "concurrently -n fe,be -c cyan,green \"npm run dev:frontend\" \"npm run dev:backend\"",
     "build": "vite build",
+    "start": "node server/extract-server.mjs",
+    "postinstall": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"

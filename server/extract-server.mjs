@@ -392,6 +392,31 @@ async function handleGenerateRecipe(req, res) {
   }
 }
 
+const MIME = {
+  '.html': 'text/html',
+  '.js': 'application/javascript',
+  '.css': 'text/css',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.webp': 'image/webp',
+  '.woff2': 'font/woff2',
+};
+
+function serveStatic(req, res) {
+  let urlPath = new URL(req.url, 'http://localhost').pathname;
+  if (urlPath === '/') urlPath = '/index.html';
+  const filePath = path.join(process.cwd(), 'dist', urlPath);
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    const ext = path.extname(filePath);
+    res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
+    res.end(fs.readFileSync(filePath));
+    return true;
+  }
+  return false;
+}
+
 const server = http.createServer((req, res) => {
   if (req.method === 'OPTIONS') {
     sendJSON(res, 204, {});
@@ -403,6 +428,9 @@ const server = http.createServer((req, res) => {
   }
   if (req.method === 'POST' && req.url === '/generate-recipe') {
     handleGenerateRecipe(req, res);
+    return;
+  }
+  if (req.method === 'GET' && serveStatic(req, res)) {
     return;
   }
   sendJSON(res, 404, { error: 'Not found' });

@@ -1,0 +1,142 @@
+[
+  {
+    "id": "v60",
+    "name": "V60",
+    "category": "pour_over",
+    "default_ratio_range": [15, 16],
+    "default_temp_range": [92, 96],
+    "base_recipe": {
+      "ratio": 15,
+      "temp_c": 94,
+      "grind_relative": "medium-fine",
+      "total_time_seconds": 180
+    },
+    "technique_notes": "Bloom with 3x coffee weight for 30s. Pour in slow concentric circles, keeping water level consistent. Finish with a gentle center pour. Aim for 2:30-3:30 total drawdown.",
+    "brew_steps": [
+      { "type": "pour", "label": "Bloom", "time_sec": 0, "duration_sec": 30, "water_fraction": 0.15, "instruction": "Pour 3x coffee weight to bloom, let degas" },
+      { "type": "pour", "label": "Second Pour", "time_sec": 30, "duration_sec": 75, "water_fraction": 0.50, "instruction": "Pour in slow concentric circles, keeping water level consistent" },
+      { "type": "pour", "label": "Final Pour", "time_sec": 105, "duration_sec": 60, "water_fraction": 0.35, "instruction": "Gentle center pour to finish" },
+      { "type": "drawdown", "label": "Drawdown", "time_sec": 165, "duration_sec": 30, "water_fraction": 0, "instruction": "Let bed drain until surface is nearly dry" }
+    ]
+  },
+  {
+    "id": "aeropress",
+    "name": "Aeropress",
+    "category": "immersion",
+    "default_ratio_range": [12, 15],
+    "default_temp_range": [85, 95],
+    "base_recipe": {
+      "ratio": 14,
+      "temp_c": 90,
+      "grind_relative": "medium-fine",
+      "total_time_seconds": 105
+    },
+    "technique_notes": "Inverted method: Add coffee, then water. Stir for 10s. Steep 60s. Flip and press gently over 30s.",
+    "brew_steps": [
+      { "type": "action", "label": "Add Coffee", "time_sec": 0, "duration_sec": 10, "water_fraction": 0, "instruction": "Add coffee grounds to Aeropress chamber (inverted)" },
+      { "type": "pour", "label": "Add Water", "time_sec": 10, "duration_sec": 10, "water_fraction": 1.0, "instruction": "Pour all water, then stir gently for 10s" },
+      { "type": "steep", "label": "Steep", "time_sec": 20, "duration_sec": 60, "water_fraction": 0, "instruction": "Let steep undisturbed" },
+      { "type": "action", "label": "Flip & Press", "time_sec": 80, "duration_sec": 25, "water_fraction": 0, "instruction": "Flip onto mug and press gently over 25s" }
+    ]
+  },
+  {
+    "id": "french_press",
+    "name": "French Press",
+    "category": "immersion",
+    "default_ratio_range": [12, 15],
+    "default_temp_range": [93, 96],
+    "base_recipe": {
+      "ratio": 14,
+      "temp_c": 94,
+      "grind_relative": "coarse",
+      "total_time_seconds": 240
+    },
+    "technique_notes": "Add coffee, pour hot water, stir gently. Steep for 4 minutes. Press plunger down slowly and evenly.",
+    "brew_steps": [
+      { "type": "action", "label": "Add Coffee", "time_sec": 0, "duration_sec": 10, "water_fraction": 0, "instruction": "Add coarse coffee grounds to French Press" },
+      { "type": "pour", "label": "Add Water", "time_sec": 10, "duration_sec": 20, "water_fraction": 1.0, "instruction": "Pour all hot water, then stir gently" },
+      { "type": "steep", "label": "Steep", "time_sec": 30, "duration_sec": 180, "water_fraction": 0, "instruction": "Let steep for 4 minutes" },
+      { "type": "action", "label": "Press", "time_sec": 210, "duration_sec": 30, "water_fraction": 0, "instruction": "Press plunger down slowly and evenly" }
+    ]
+  },
+  {
+    "id": "moka_pot",
+    "name": "Moka Pot",
+    "category": "stovetop",
+    "default_ratio_range": [8, 12],
+    "default_temp_range": [90, 100],
+    "base_recipe": {
+      "ratio": 10,
+      "temp_c": 95,
+      "grind_relative": "medium-fine",
+      "total_time_seconds": 300
+    },
+    "technique_notes": "Fill base with hot water just below safety valve. Fill basket with coffee, level without tamping. Screw on top. Brew on medium-low heat until gurgling begins. Remove from heat immediately.",
+    "brew_steps": [
+      { "type": "action", "label": "Fill Base", "time_sec": 0, "duration_sec": 15, "water_fraction": 0, "instruction": "Fill base chamber with hot water just below safety valve" },
+      { "type": "action", "label": "Fill Basket", "time_sec": 15, "duration_sec": 15, "water_fraction": 0, "instruction": "Fill basket with coffee, level without tamping, screw top on" },
+      { "type": "action", "label": "Brew", "time_sec": 30, "duration_sec": 240, "water_fraction": 0, "instruction": "Place on medium-low heat, brew until gurgling begins" },
+      { "type": "action", "label": "Remove", "time_sec": 270, "duration_sec": 30, "water_fraction": 0, "instruction": "Remove from heat immediately, cool base under running water to stop extraction" }
+    ]
+  },
+  {
+    "id": "espresso",
+    "name": "Espresso",
+    "category": "espresso",
+    "default_ratio_range": [2, 3],
+    "default_temp_range": [90, 94],
+    "base_recipe": {
+      "ratio": 2.5,
+      "temp_c": 93,
+      "grind_relative": "fine",
+      "total_time_seconds": 28
+    },
+    "technique_notes": "Distribute grounds evenly in portafilter, tamp firmly with ~15kg pressure. Brew for 25-32s. Aim for 36-40g output from 15-18g dose.",
+    "brew_steps": [
+      { "type": "action", "label": "Prepare", "time_sec": 0, "duration_sec": 10, "water_fraction": 0, "instruction": "Distribute grounds evenly in portafilter, tamp firmly" },
+      { "type": "action", "label": "Start Brew", "time_sec": 10, "duration_sec": 5, "water_fraction": 1.0, "instruction": "Lock portafilter and start brew immediately" },
+      { "type": "action", "label": "Extraction", "time_sec": 15, "duration_sec": 25, "water_fraction": 0, "instruction": "Watch for golden crema, target 25-32s extraction" },
+      { "type": "action", "label": "Stop", "time_sec": 40, "duration_sec": 5, "water_fraction": 0, "instruction": "Stop brew when target yield is reached" }
+    ]
+  },
+  {
+    "id": "chemex",
+    "name": "Chemex",
+    "category": "pour_over",
+    "default_ratio_range": [15, 17],
+    "default_temp_range": [92, 96],
+    "base_recipe": {
+      "ratio": 16,
+      "temp_c": 94,
+      "grind_relative": "medium-coarse",
+      "total_time_seconds": 270
+    },
+    "technique_notes": "Use Chemex bonded filters. Bloom with 3x coffee weight for 40s. Pour in slow circles, pausing as water drains. Total brew time 4:00-4:30.",
+    "brew_steps": [
+      { "type": "pour", "label": "Bloom", "time_sec": 0, "duration_sec": 40, "water_fraction": 0.15, "instruction": "Pour 3x coffee weight to bloom, let degas 40s" },
+      { "type": "pour", "label": "First Pour", "time_sec": 40, "duration_sec": 80, "water_fraction": 0.50, "instruction": "Pour in slow circles, pause as water drains through bed" },
+      { "type": "pour", "label": "Second Pour", "time_sec": 120, "duration_sec": 80, "water_fraction": 0.35, "instruction": "Continue pouring in circles, maintaining water level" },
+      { "type": "drawdown", "label": "Drawdown", "time_sec": 200, "duration_sec": 70, "water_fraction": 0, "instruction": "Let bed drain completely, aim for total 4:00-4:30" }
+    ]
+  },
+  {
+    "id": "clever_dripper",
+    "name": "Clever Dripper",
+    "category": "immersion",
+    "default_ratio_range": [15, 17],
+    "default_temp_range": [90, 96],
+    "base_recipe": {
+      "ratio": 16,
+      "temp_c": 93,
+      "grind_relative": "medium",
+      "total_time_seconds": 210
+    },
+    "technique_notes": "Insert filter, rinse. Add coffee and water. Steep for 2:00 with occasional stir at 1:00. Place on mug to drain. Total 3:00-3:30.",
+    "brew_steps": [
+      { "type": "action", "label": "Prepare", "time_sec": 0, "duration_sec": 15, "water_fraction": 0, "instruction": "Insert filter, rinse with hot water, add coffee grounds" },
+      { "type": "pour", "label": "Add Water", "time_sec": 15, "duration_sec": 15, "water_fraction": 1.0, "instruction": "Pour all water, close lid, start timer" },
+      { "type": "steep", "label": "Steep", "time_sec": 30, "duration_sec": 105, "water_fraction": 0, "instruction": "Let steep, stir gently at 1:00 mark" },
+      { "type": "action", "label": "Drain", "time_sec": 135, "duration_sec": 75, "water_fraction": 0, "instruction": "Place on mug to drain, let draw down completely" }
+    ]
+  }
+]

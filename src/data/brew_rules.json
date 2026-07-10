@@ -1,0 +1,156 @@
+{
+  "method_suggestions": [
+    {
+      "roast_level": "light",
+      "process": "washed",
+      "tasting_tags": ["floral", "citrus", "tea", "jasmine", "bergamot", "lemon"],
+      "suggestions": [
+        { "brewer_id": "v60", "rationale": "Pour-over highlights delicate floral and citrus notes, giving clarity and brightness" },
+        { "brewer_id": "aeropress", "rationale": "Aeropress with light roast preserves subtle flavors and produces a clean cup" }
+      ]
+    },
+    {
+      "roast_level": "light",
+      "process": "natural",
+      "tasting_tags": ["berry", "fruit", "wine", "fermented", "stone fruit"],
+      "suggestions": [
+        { "brewer_id": "v60", "rationale": "Light natural-processed coffees shine in pour-over with pronounced fruit-forward character" },
+        { "brewer_id": "clever_dripper", "rationale": "Clever Dripper's immersion hybrid brings out sweetness in natural-processed beans" }
+      ]
+    },
+    {
+      "roast_level": "light",
+      "process": "honey",
+      "tasting_tags": ["stone fruit", "sweet", "fruit", "berry"],
+      "suggestions": [
+        { "brewer_id": "v60", "rationale": "Honey-processed beans show balanced sweetness and acidity in a pour-over" },
+        { "brewer_id": "clever_dripper", "rationale": "Clever Dripper highlights the syrupy body honey processing adds" }
+      ]
+    },
+    {
+      "roast_level": "light",
+      "process": "any",
+      "tasting_tags": [],
+      "suggestions": [
+        { "brewer_id": "v60", "rationale": "Light roasts benefit from pour-over's ability to highlight bright acidity and origin character" },
+        { "brewer_id": "aeropress", "rationale": "Aeropress tames acidity while preserving flavor clarity in light roasts" }
+      ]
+    },
+    {
+      "roast_level": "light-medium",
+      "process": "natural",
+      "tasting_tags": ["fruit", "berry", "wine", "fermented", "stone fruit"],
+      "suggestions": [
+        { "brewer_id": "v60", "rationale": "Fruity natural-processed beans pop in a pour-over with clean separation of flavors" },
+        { "brewer_id": "clever_dripper", "rationale": "Clever Dripper brings sweetness and body to medium-light naturals" }
+      ]
+    },
+    {
+      "roast_level": "light-medium",
+      "process": "honey",
+      "tasting_tags": ["sweet", "fruit", "nut", "caramel"],
+      "suggestions": [
+        { "brewer_id": "v60", "rationale": "Honey-processed beans balance acidity and sweetness beautifully in pour-over" },
+        { "brewer_id": "aeropress", "rationale": "Aeropress adds body to honey-processed coffees while retaining sweetness" }
+      ]
+    },
+    {
+      "roast_level": "light-medium",
+      "process": "any",
+      "tasting_tags": [],
+      "suggestions": [
+        { "brewer_id": "v60", "rationale": "A versatile choice that works well with light-medium roasts of any process" },
+        { "brewer_id": "aeropress", "rationale": "Aeropress complements light-medium roasts with good body and clarity" }
+      ]
+    },
+    {
+      "roast_level": "medium",
+      "process": "any",
+      "tasting_tags": ["chocolate", "nut", "caramel", "brown sugar", "toast", "baking spice"],
+      "suggestions": [
+        { "brewer_id": "v60", "rationale": "Medium roasts produce balanced, approachable cups in a pour-over" },
+        { "brewer_id": "aeropress", "rationale": "Aeropress yields a clean, balanced cup from medium roast beans" },
+        { "brewer_id": "chemex", "rationale": "Chemex filters out oils for a crisp, clean cup that medium roasts reward" }
+      ]
+    },
+    {
+      "roast_level": "medium-dark",
+      "process": "any",
+      "tasting_tags": ["chocolate", "nut", "caramel", "toast", "smoke", "low acid"],
+      "suggestions": [
+        { "brewer_id": "french_press", "rationale": "French press amplifies body and chocolatey notes in darker roasts" },
+        { "brewer_id": "moka_pot", "rationale": "Moka pot concentrates darker roasts into a rich, espresso-like brew" }
+      ]
+    },
+    {
+      "roast_level": "dark",
+      "process": "any",
+      "tasting_tags": ["chocolate", "roast", "smoke", "low acid", "bitter", "tobacco", "earthy"],
+      "suggestions": [
+        { "brewer_id": "french_press", "rationale": "French press brings out the full body and low-acid richness of dark roasts" },
+        { "brewer_id": "moka_pot", "rationale": "Moka pot produces a bold, concentrated brew ideal for dark roasts" }
+      ]
+    },
+    {
+      "roast_level": "espresso_blend",
+      "process": "any",
+      "tasting_tags": [],
+      "suggestions": [
+        { "brewer_id": "espresso", "rationale": "Designed for espresso - use your espresso machine for the intended result" },
+        { "brewer_id": "moka_pot", "rationale": "If you don't have an espresso machine, a Moka pot is the closest alternative" }
+      ]
+    }
+  ],
+  "flavor_focus_adjustments": {
+    "brighter_acidity": {
+      "label": "Brighter Acidity",
+      "description": "Emphasize bright, crisp acidity",
+      "grind_offset_levels": -1,
+      "temp_offset_c": -3,
+      "ratio_offset": 0.5,
+      "time_offset_seconds": -15
+    },
+    "more_sweetness_body": {
+      "label": "More Sweetness & Body",
+      "description": "Enhance sweetness and mouthfeel",
+      "grind_offset_levels": 1,
+      "temp_offset_c": 2,
+      "ratio_offset": -0.5,
+      "time_offset_seconds": 30
+    },
+    "reduce_bitterness": {
+      "label": "Reduce Bitterness",
+      "description": "Minimize bitter notes",
+      "grind_offset_levels": 1,
+      "temp_offset_c": -3,
+      "ratio_offset": 0.5,
+      "time_offset_seconds": -15
+    },
+    "balanced": {
+      "label": "Balanced",
+      "description": "Default balanced profile",
+      "grind_offset_levels": 0,
+      "temp_offset_c": 0,
+      "ratio_offset": 0,
+      "time_offset_seconds": 0
+    }
+  },
+  "grind_levels": {
+    "extra-fine": { "min_microns": 100, "max_microns": 250 },
+    "fine": { "min_microns": 200, "max_microns": 400 },
+    "medium-fine": { "min_microns": 400, "max_microns": 600 },
+    "medium": { "min_microns": 600, "max_microns": 800 },
+    "medium-coarse": { "min_microns": 800, "max_microns": 1000 },
+    "coarse": { "min_microns": 1000, "max_microns": 1300 },
+    "extra-coarse": { "min_microns": 1300, "max_microns": 1700 }
+  },
+  "grind_levels_ordered": [
+    "extra-fine",
+    "fine",
+    "medium-fine",
+    "medium",
+    "medium-coarse",
+    "coarse",
+    "extra-coarse"
+  ]
+}

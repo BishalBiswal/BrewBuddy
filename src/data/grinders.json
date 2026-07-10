@@ -1,0 +1,123 @@
+[
+  {
+    "id": "baratza_encore",
+    "brand": "Baratza",
+    "model": "Encore",
+    "setting_type": "numbers",
+    "step_size": 1,
+    "min_setting": 0,
+    "max_setting": 40,
+    "micron_range_min": 200,
+    "micron_range_max": 1200
+  },
+  {
+    "id": "baratza_sette_270",
+    "brand": "Baratza",
+    "model": "Sette 270",
+    "setting_type": "numbers",
+    "step_size": 1,
+    "min_setting": 1,
+    "max_setting": 40,
+    "micron_range_min": 150,
+    "micron_range_max": 1000
+  },
+  {
+    "id": "comandante_c40",
+    "brand": "Comandante",
+    "model": "C40",
+    "setting_type": "clicks",
+    "step_size": 1,
+    "min_setting": 0,
+    "max_setting": 40,
+    "micron_range_min": 100,
+    "micron_range_max": 1300
+  },
+  {
+    "id": "1zpresso_jmax",
+    "brand": "1Zpresso",
+    "model": "J-Max",
+    "setting_type": "clicks",
+    "step_size": 1,
+    "min_setting": 0,
+    "max_setting": 40,
+    "micron_range_min": 100,
+    "micron_range_max": 1200
+  },
+  {
+    "id": "1zpresso_kplus",
+    "brand": "1Zpresso",
+    "model": "K-Plus",
+    "setting_type": "clicks",
+    "step_size": 1,
+    "min_setting": 0,
+    "max_setting": 40,
+    "micron_range_min": 100,
+    "micron_range_max": 1200
+  },
+  {
+    "id": "timemore_c2",
+    "brand": "Timemore",
+    "model": "C2",
+    "setting_type": "clicks",
+    "step_size": 1,
+    "min_setting": 0,
+    "max_setting": 24,
+    "micron_range_min": 150,
+    "micron_range_max": 1000
+  },
+  {
+    "id": "fellow_ode_v2",
+    "brand": "Fellow",
+    "model": "Ode (Gen 2)",
+    "setting_type": "numbers",
+    "step_size": 0.5,
+    "min_setting": 1,
+    "max_setting": 11,
+    "micron_range_min": 200,
+    "micron_range_max": 1200
+  },
+  {
+    "id": "wilfa_svart",
+    "brand": "Wilfa",
+    "model": "Svart Aroma",
+    "setting_type": "numbers",
+    "step_size": 1,
+    "min_setting": 1,
+    "max_setting": 35,
+    "micron_range_min": 200,
+    "micron_range_max": 1200
+  },
+  {
+    "id": "kinu_m47",
+    "brand": "Kinu",
+    "model": "M47",
+    "setting_type": "clicks",
+    "step_size": 1,
+    "min_setting": 0,
+    "max_setting": 40,
+    "micron_range_min": 100,
+    "micron_range_max": 1300
+  },
+  {
+    "id": "eureka_mignon",
+    "brand": "Eureka",
+    "model": "Mignon Specialita",
+    "setting_type": "numbers",
+    "step_size": 0.5,
+    "min_setting": 0,
+    "max_setting": 10,
+    "micron_range_min": 100,
+    "micron_range_max": 1000
+  },
+  {
+    "id": "custom",
+    "brand": null,
+    "model": "Custom / Calibrate",
+    "setting_type": "custom",
+    "step_size": 1,
+    "min_setting": 0,
+    "max_setting": 100,
+    "micron_range_min": null,
+    "micron_range_max": null
+  }
+]

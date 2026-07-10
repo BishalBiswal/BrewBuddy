@@ -1,0 +1,16 @@
+node_modules
+dist
+*.log
+.env
+.env.local
+.env.*.local
+*.pid
+*.seed
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode
+.idea
+*.swp
+*.swo
+*~

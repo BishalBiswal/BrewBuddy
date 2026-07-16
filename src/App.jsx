@@ -1,13 +1,12 @@
-﻿import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import PacketForm from './components/PacketForm';
 import EquipmentPicker from './components/EquipmentPicker';
 import FlavorFocusPicker from './components/FlavorFocusPicker';
 import RecipeCard from './components/RecipeCard';
 import { suggestBrewMethods } from './engine/recommend';
-import { baseRecipe, adjustForFlavorFocus } from './engine/recipe';
 import { generateRecipeFromLLM } from './engine/llm-recipe';
 import { translateGrindToGrinder, calibrateCustomGrinder } from './engine/grind';
-import { buildFullRationale, buildDynamicRationale } from './engine/rationale';
+import { buildDynamicRationale } from './engine/rationale';
 import { analyzeCoffee } from './engine/coffee-analysis';
 import { generateBrewIntent } from './engine/brew-intent';
 import { validateRecipe, repairRecipe } from './engine/recipe-validator';
@@ -99,32 +98,7 @@ export default function App() {
     setShowCalibration(false);
   }, []);
 
-  const buildFallbackRecipe = useCallback(() => {
-    const base = baseRecipe(selectedBrewer);
-    const adjusted = adjustForFlavorFocus(base, flavorFocus, batchSizeMl);
 
-    const grindSetting = translateGrindToGrinder(adjusted.grind_relative, selectedGrinder);
-    adjusted.grind_grinder_setting = grindSetting;
-
-    const brewSugs = suggestBrewMethods(packet.roastLevel, packet.process, packet.tastingNotes);
-    const brewerMap = {};
-    brewers.forEach(b => { brewerMap[b.id] = b.name; });
-    const enrichedSugs = brewSugs.map(s => ({
-      ...s,
-      brewer_name: brewerMap[s.brewer_id] || s.brewer_id,
-    }));
-
-    const rat = buildFullRationale(
-      packet.roastLevel, packet.process, packet.tastingNotes,
-      selectedBrewer, flavorFocus, base, adjusted
-    );
-
-    return {
-      recipe: adjusted,
-      rationale: rat,
-      suggestions: enrichedSugs.filter(s => s.brewer_id !== selectedBrewer),
-    };
-  }, [selectedBrewer, selectedGrinder, flavorFocus, batchSizeMl, packet]);
 
   const handleGenerateRecipe = useCallback(async () => {
     setRecipeStatus('Generating a custom recipe from the scanned coffee details...');
@@ -179,16 +153,15 @@ export default function App() {
       }
       setSuggestions(generated.suggestions || []);
     } catch (err) {
-      const fallback = buildFallbackRecipe();
-      setRecipe(fallback.recipe);
-      setRationale(fallback.rationale);
-      setSuggestions(fallback.suggestions);
-      setRecipeWarning(`Online recipe generation failed, so a rule-based fallback was used. ${err.message || ''}`.trim());
+      setRecipe(null);
+      setRationale('');
+      setSuggestions([]);
+      setRecipeWarning(`Online recipe generation failed. ${err.message || ''}`.trim());
     } finally {
       setRecipeStatus('');
       setStep('recipe');
     }
-  }, [packet, selectedBrewer, selectedGrinder, batchSizeMl, flavorFocus, buildFallbackRecipe, brewIntent, coffeeAnalysis]);
+  }, [packet, selectedBrewer, selectedGrinder, batchSizeMl, flavorFocus, brewIntent, coffeeAnalysis]);
 
   const handleFlavorSubmit = useCallback(() => {
     handleGenerateRecipe();
@@ -274,3 +247,7 @@ export default function App() {
     </div>
   );
 }
+
+
+
+

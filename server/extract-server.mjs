@@ -1,9 +1,10 @@
-﻿import http from 'node:http';
+import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import { buildChatProvidersFromEnv, describeChatProviders, tryProviders } from './llm-providers.mjs';
 
-function loadEnvFile(filePath) {
-  if (!fs.existsSync(filePath)) return;
+function loadEnvFile(filePath, target = process.env) {
+  if (!fs.existsSync(filePath)) return target;
   const lines = fs.readFileSync(filePath, 'utf-8').split(/\r?\n/);
   for (const line of lines) {
     const trimmed = line.trim();
@@ -15,18 +16,23 @@ function loadEnvFile(filePath) {
     if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
       value = value.slice(1, -1);
     }
-    if (key && !process.env[key]) process.env[key] = value;
+    if (key && !target[key]) target[key] = value;
   }
+  return target;
 }
 
-loadEnvFile(path.resolve(process.cwd(), '.env'));
-loadEnvFile(path.resolve(process.cwd(), '.env.local'));
+function readRuntimeEnv() {
+  const runtimeEnv = { ...process.env };
+  loadEnvFile(path.resolve(process.cwd(), '.env'), runtimeEnv);
+  loadEnvFile(path.resolve(process.cwd(), '.env.local'), runtimeEnv);
+  return runtimeEnv;
+}
 
 const PORT = process.env.PORT || process.env.EXTRACT_PORT || 3001;
 const OCR_SPACE_API_KEY = process.env.OCR_SPACE_API_KEY || 'helloworld';
 const OCR_SPACE_URL = process.env.OCR_SPACE_URL || 'https://api.ocr.space/parse/image';
 const HF_TOKEN = process.env.HF_TOKEN || process.env.HUGGINGFACE_API_TOKEN || '';
-const HF_MODEL = process.env.HF_MODEL || 'meta-llama/Llama-3.3-70B-Instruct:fastest';
+const HF_MODEL = process.env.HF_MODEL || 'meta-llama/Llama-3.1-8B-Instruct:fastest';
 const HF_CHAT_URL = process.env.HF_CHAT_URL || 'https://router.huggingface.co/v1/chat/completions';
 
 const brewers = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/data/brewers.json'), 'utf-8'));
@@ -150,41 +156,24 @@ OCR text:
 ${rawOcrText}`;
 }
 
+function getChatProviders() {
+  return buildChatProvidersFromEnv(readRuntimeEnv());
+}
+
 async function callHuggingFace(messages, { temperature = 0, maxTokens = 700 } = {}) {
-  if (!HF_TOKEN) {
-    throw new Error('HF_TOKEN is not configured');
-  }
-
-  const response = await fetch(HF_CHAT_URL, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${HF_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: HF_MODEL,
-      stream: false,
-      messages,
-      temperature,
-      max_tokens: maxTokens,
-    }),
-  });
-
-  if (!response.ok) {
-    const detail = await response.text().catch(() => '');
-    throw new Error(`Hugging Face returned ${response.status}${detail ? `: ${detail}` : ''}`);
-  }
-
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content || data.generated_text || data[0]?.generated_text || '';
+  const { result } = await tryProviders(getChatProviders(), async (provider) => provider.call(messages, { temperature, maxTokens }));
+  return result;
 }
 
 async function structureWithHuggingFace(rawOcrText) {
-  const text = await callHuggingFace([
-    { role: 'system', content: 'Return only strict JSON. No prose. No markdown.' },
-    { role: 'user', content: buildPrompt(rawOcrText) },
-  ], { temperature: 0, maxTokens: 700 });
-  return extractJson(text);
+  const { result } = await tryProviders(getChatProviders(), async (provider) => {
+    const text = await provider.call([
+      { role: 'system', content: 'Return only strict JSON. No prose. No markdown.' },
+      { role: 'user', content: buildPrompt(rawOcrText) },
+    ], { temperature: 0, maxTokens: 500, responseFormat: { type: 'json_object' } });
+    return extractJson(text);
+  });
+  return result;
 }
 
 function normalizeCoffeeData(input = {}) {
@@ -622,11 +611,14 @@ RULES:
 }
 
 async function generateRecipeWithHuggingFace(payload) {
-  const text = await callHuggingFace([
-    { role: 'system', content: 'You are a World Brewers Cup level coffee brewing expert. Return only strict JSON matching the requested schema. No markdown fences, no prose outside the JSON.' },
-    { role: 'user', content: buildRecipePrompt(payload) },
-  ], { temperature: 0.6, maxTokens: 2000 });
-  return extractJson(text);
+  const { result } = await tryProviders(getChatProviders(), async (provider) => {
+    const text = await provider.call([
+      { role: 'system', content: 'You are a World Brewers Cup level coffee brewing expert. Return only strict JSON matching the requested schema. No markdown fences, no prose outside the JSON.' },
+      { role: 'user', content: buildRecipePrompt(payload) },
+    ], { temperature: 0.3, maxTokens: 1200, responseFormat: { type: 'json_object' } });
+    return extractJson(text);
+  });
+  return result;
 }
 
 async function handleExtract(req, res) {
@@ -661,12 +653,7 @@ async function handleExtract(req, res) {
     sendJSON(res, 200, normalizeExtraction(structured, rawOcrText));
   } catch (err) {
     console.error('Hugging Face structuring failed:', err.message);
-    sendJSON(res, 503, {
-      error: 'Free online LLM unavailable or not configured. Set HF_TOKEN for Hugging Face Inference Providers.',
-      code: 'online_llm_unavailable',
-      detail: err.message,
-      raw_ocr_text: rawOcrText,
-    });
+    sendJSON(res, 200, normalizeExtraction({}, rawOcrText));
   }
 }
 
@@ -695,13 +682,12 @@ async function handleGenerateRecipe(req, res) {
   } catch (err) {
     console.error('Hugging Face recipe generation failed:', err.message);
     sendJSON(res, 503, {
-      error: 'Free online LLM recipe generation unavailable or not configured.',
+      error: 'Online LLM recipe generation unavailable.',
       code: 'online_recipe_unavailable',
       detail: err.message,
     });
   }
 }
-
 const MIME = {
   '.html': 'text/html',
   '.js': 'application/javascript',
@@ -746,8 +732,26 @@ const server = http.createServer((req, res) => {
   sendJSON(res, 404, { error: 'Not found' });
 });
 
-server.listen(PORT, () => {
-  console.log(`Extract server listening on http://127.0.0.1:${PORT}`);
-  console.log(`Using OCR.space OCR and Hugging Face model ${HF_MODEL}`);
-  console.log(`HF_TOKEN configured: ${HF_TOKEN ? 'yes' : 'no'}`);
+server.on('error', (err) => {
+  if (err?.code === 'EADDRINUSE') {
+    console.warn(`Port ${PORT} is already in use. Another extract server may already be running.`);
+    process.exit(0);
+    return;
+  }
+
+  console.error('Extract server failed to start:', err);
+  process.exit(1);
 });
+
+server.listen(PORT, () => {
+  const chatProviders = getChatProviders();
+  console.log(`Extract server listening on http://127.0.0.1:${PORT}`);
+  console.log(`Using OCR.space OCR and LLM providers: ${describeChatProviders(chatProviders)}`);
+  console.log(`Primary Hugging Face model: ${HF_MODEL}`);
+});
+
+
+
+
+
+

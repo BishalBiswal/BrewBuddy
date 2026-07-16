@@ -1,4 +1,4 @@
-﻿export async function generateRecipeFromLLM(payload) {
+export async function generateRecipeFromLLM(payload) {
   const response = await fetch('/generate-recipe', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -31,3 +31,5 @@ export async function generateRecipeLLM({ packet, brewerId, batchSizeMl, flavorF
     flavor_focus: flavorFocus,
   });
 }
+
+
